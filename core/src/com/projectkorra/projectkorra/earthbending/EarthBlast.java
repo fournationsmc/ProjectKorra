@@ -49,6 +49,7 @@ public class EarthBlast extends EarthAbility {
 	private Location location;
 	private Location destination;
 	private Location firstDestination;
+	private Location originalLocation;
 	private Block sourceBlock;
 
 	public EarthBlast(final Player player) {
@@ -118,6 +119,7 @@ public class EarthBlast extends EarthAbility {
 
 		this.damage = applyMetalPowerFactor(this.damage, this.sourceBlock);
 
+		this.originalLocation = this.sourceBlock.getLocation().clone();
 		this.location = this.sourceBlock.getLocation();
 	}
 
@@ -281,6 +283,9 @@ public class EarthBlast extends EarthAbility {
 
 						DamageHandler.damageEntity(entity, damage, this);
 						this.isProgressing = false;
+						if (getMovedEarth().containsKey(this.sourceBlock)) {
+							removeRevertIndex(this.sourceBlock);
+						}
 					}
 				}
 
@@ -340,10 +345,14 @@ public class EarthBlast extends EarthAbility {
 	@Override
 	public void remove() {
 		super.remove();
-		if (this.destination != null && this.sourceBlock != null) {
+		if (this.sourceBlock != null) {
+			// Always remove the temporary block mapping
+			if (getMovedEarth().containsKey(this.sourceBlock)) {
+				removeRevertIndex(this.sourceBlock);
+			}
+			// Set the block to air so it’s removed from the world
 			this.sourceBlock.setType(Material.AIR);
-		} else if (this.sourceBlock != null) {
-			this.sourceBlock.setType(this.sourceType);
+			this.originalLocation.getBlock().setType(this.sourceType);
 		}
 	}
 
