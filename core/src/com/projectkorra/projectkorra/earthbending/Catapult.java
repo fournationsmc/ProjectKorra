@@ -131,6 +131,10 @@ public class Catapult extends EarthAbility {
 		final Location tar = this.origin.clone().add(direction.clone().normalize().multiply(this.stage + 0.5));
 		this.target = tar;
 		final Vector apply = this.target.clone().toVector().subtract(this.origin.clone().toVector());
+
+		// Extinguish the player, as per Kaja's request
+		this.player.setFireTicks(0);
+
 		GeneralMethods.setVelocity(this, this.player, apply);
 		this.moveEarth(apply, direction);
 		this.remove();

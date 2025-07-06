@@ -1,6 +1,7 @@
 package com.projectkorra.projectkorra.waterbending.ice;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
@@ -30,6 +31,8 @@ import com.projectkorra.projectkorra.util.TempPotionEffect;
 import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
 
 public class IceBlast extends IceAbility {
+
+	private final List<TempBlock> tempBlocks = new ArrayList<>();
 
 	private boolean prepared;
 	private boolean settingUp;
@@ -140,22 +143,22 @@ public class IceBlast extends IceAbility {
 	@Override
 	public void remove() {
 		super.remove();
-		if (this.progressing) {
-			if (this.source != null) {
-				this.source.revertBlock();
-			}
-			this.progressing = false;
+		// Immediately revert the temporary block used for the IceBlast,
+		// regardless of whether the ability is still progressing.
+		for (TempBlock temp : this.tempBlocks) {
+			temp.revertBlock();
 		}
-
-		if (this.player.isOnline()) {
-			if (this.bPlayer != null) {
-				this.bPlayer.addCooldown(this);
-			}
+		this.tempBlocks.clear();
+		if (this.source != null) {
+			this.source.revertBlock();
+			this.source = null;
 		}
-	}
+		this.progressing = false;
 
-	private void returnWater() {
-		new WaterReturn(this.player, this.sourceBlock);
+		// Add the cooldown if the player is online and bPlayer exists.
+		if (this.player.isOnline() && this.bPlayer != null) {
+			this.bPlayer.addCooldown(this);
+		}
 	}
 
 	private void affect(final LivingEntity entity) {
@@ -171,6 +174,7 @@ public class IceBlast extends IceAbility {
 			new TempPotionEffect(entity, effect);
 			DamageHandler.damageEntity(entity, this.damage, this);
 		}
+		//DamageHandler.damageEntity(entity, this.damage, this);
 		AirAbility.breakBreathbendingHold(entity);
 
 		for (int x = 0; x < 30; x++) {
@@ -206,14 +210,12 @@ public class IceBlast extends IceAbility {
 		this.progressing = true;
 		this.settingUp = true;
 		this.prepared = false;
-		if (isWater(this.sourceBlock)) {
-			// Don't modify water blocks.
-			this.source = null;
-		} else if (TempBlock.isTempBlock(this.sourceBlock)) {
+		if (TempBlock.isTempBlock(this.sourceBlock)) {
+			// If a TempBlock already exists for this source, update its material.
 			TempBlock.get(this.sourceBlock).setType(Material.PACKED_ICE);
 			this.source = TempBlock.get(this.sourceBlock);
 		} else {
-			new TempBlock(this.sourceBlock, Material.AIR);
+			// Create a single TempBlock that stores the original state and converts the block to PACKED_ICE.
 			this.source = new TempBlock(this.sourceBlock, Material.PACKED_ICE);
 		}
 	}
@@ -229,7 +231,6 @@ public class IceBlast extends IceAbility {
 			if (this.progressing) {
 				this.breakParticles(20);
 				this.remove();
-				this.returnWater();
 			} else {
 				this.breakParticles(20);
 				this.remove();
@@ -259,7 +260,6 @@ public class IceBlast extends IceAbility {
 
 			if (this.location.distanceSquared(this.destination) <= 4) {
 				this.remove();
-				this.returnWater();
 				return;
 			}
 
@@ -288,14 +288,12 @@ public class IceBlast extends IceAbility {
 			} else {
 				this.breakParticles(20);
 				this.remove();
-				this.returnWater();
 				return;
 			}
 
 
 			if (GeneralMethods.isRegionProtectedFromBuild(this, this.location)) {
 				this.remove();
-				this.returnWater();
 				return;
 			}
 
@@ -303,7 +301,6 @@ public class IceBlast extends IceAbility {
 				if (entity.getEntityId() != this.player.getEntityId() && entity instanceof LivingEntity) {
 					this.affect((LivingEntity) entity);
 					this.progressing = false;
-					this.returnWater();
 				}
 			}
 
@@ -313,12 +310,14 @@ public class IceBlast extends IceAbility {
 			}
 
 			this.sourceBlock = block;
+			TempBlock temp;
 			if (TempBlock.isTempBlock(this.sourceBlock)) {
-				TempBlock.get(this.sourceBlock).setType(Material.PACKED_ICE);
-				this.source = TempBlock.get(this.sourceBlock);
+				temp = TempBlock.get(this.sourceBlock);
+				temp.setType(Material.PACKED_ICE);
 			} else {
-				this.source = new TempBlock(this.sourceBlock, Material.PACKED_ICE);
+				temp = new TempBlock(this.sourceBlock, Material.PACKED_ICE);
 			}
+			this.tempBlocks.add(temp);
 
 			for (int x = 0; x < 10; x++) {
 				ParticleEffect.ITEM_CRACK.display(this.location, 5, Math.random() / 2, Math.random() / 2, Math.random() / 2, new ItemStack(Material.ICE));
