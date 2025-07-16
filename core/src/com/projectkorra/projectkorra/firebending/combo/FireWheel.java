@@ -44,6 +44,7 @@ public class FireWheel extends FireAbility implements ComboAbility {
 	private double damage;
 	private ArrayList<LivingEntity> affectedEntities;
 
+
 	public FireWheel(final Player player) {
 		super(player);
 
@@ -130,7 +131,7 @@ public class FireWheel extends FireAbility implements ComboAbility {
 			emitFirebendingLight(tempLoc);
 		}
 
-		for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.location, this.radius + 0.5)) {
+		for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.location, this.radius * 0.2)) {
 			if (entity instanceof LivingEntity && !entity.equals(this.player)) {
 				if (!this.affectedEntities.contains(entity)) {
 					this.affectedEntities.add((LivingEntity) entity);
