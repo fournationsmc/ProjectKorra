@@ -1627,6 +1627,7 @@ public class ConfigManager {
 
 			config.addDefault("Abilities.Fire.FireWheel.Enabled", true);
 			config.addDefault("Abilities.Fire.FireWheel.Range", 20.0);
+			config.addDefault("Abilities.Fire.FireWheel.HitboxMultiplier", 0.2);
 			config.addDefault("Abilities.Fire.FireWheel.Damage", 4.0);
 			config.addDefault("Abilities.Fire.FireWheel.Speed", 0.55);
 			config.addDefault("Abilities.Fire.FireWheel.Cooldown", 6000);
