@@ -104,6 +104,12 @@
       <artifactId>core-legacy</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <!-- PaperLib -->
+    <dependency>
+      <groupId>io.papermc</groupId>
+      <artifactId>paperlib</artifactId>
+      <version>1.0.1</version>
+    </dependency>
     <!-- Spigot API -->
     <dependency>
       <groupId>org.spigotmc</groupId>
