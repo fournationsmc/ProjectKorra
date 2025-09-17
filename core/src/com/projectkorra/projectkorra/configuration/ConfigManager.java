@@ -1033,6 +1033,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.Twister.Height", 8);
 			config.addDefault("Abilities.Air.Twister.Radius", 3.5);
 			config.addDefault("Abilities.Air.Twister.RemoveDelay", 1500);
+            config.addDefault("Abilities.Air.Twister.ThrowStrength", 2.5);
 			config.addDefault("Abilities.Air.Twister.Cooldown", 10000);
 			config.addDefault("Abilities.Air.Twister.DegreesPerParticle", 7);
 			config.addDefault("Abilities.Air.Twister.HeightPerParticle", 1.25);

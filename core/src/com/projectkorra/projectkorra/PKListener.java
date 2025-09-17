@@ -400,7 +400,9 @@ public class PKListener implements Listener {
 		Block block = event.getBlock();
 		Material heldType = event.getItemInHand().getType();
 		if (heldType != Material.FLINT_AND_STEEL && heldType != Material.FIRE_CHARGE) {
-			TempBlock.removeBlock(block);
+            if (TempBlock.get(block) != null) {
+                TempBlock.removeBlock(block);
+            }
 		}
 	}
 
