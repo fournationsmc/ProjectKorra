@@ -949,7 +949,7 @@ public abstract class CoreAbility implements Ability {
 	}
 
 	/**
-	 * This method no longer works as of 1.12.0. Instead, listen to the {@link AbilityRecalculateAttributeEvent} to modify
+	 * This method no longer works as of 1.12.1. Instead, listen to the {@link AbilityRecalculateAttributeEvent} to modify
 	 * attributes and call {@link #recalculateAttributes()} to call the event.
 	 */
 	@Deprecated
