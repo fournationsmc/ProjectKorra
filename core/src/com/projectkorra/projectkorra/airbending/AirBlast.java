@@ -559,6 +559,22 @@ public class AirBlast extends AirAbility {
         return removed;
     }
 
+    public static boolean removePlayerAirBlasts(final Player player, final boolean clearPendingOrigins) {
+        boolean removed = false;
+        for (final AirBlast airBlast : getAbilities(AirBlast.class)) {
+            if (airBlast.getPlayer() != null && airBlast.getPlayer().getUniqueId().equals(player.getUniqueId())) {
+                airBlast.remove();
+                removed = true;
+            }
+        }
+
+        if (clearPendingOrigins) {
+            ORIGINS.remove(player);
+        }
+
+        return removed;
+    }
+
     @Override
     public String getName() {
         return "AirBlast";

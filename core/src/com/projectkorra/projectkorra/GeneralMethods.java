@@ -983,6 +983,53 @@ public class GeneralMethods {
 		return getArmorIndex(mat) != -1;
 	}
 
+	public static boolean isPlayerWearingArmor(final Player player) {
+		return (player.getInventory().getHelmet() != null && isArmor(player.getInventory().getHelmet().getType()))
+				|| (player.getInventory().getChestplate() != null && isArmor(player.getInventory().getChestplate().getType()))
+				|| (player.getInventory().getLeggings() != null && isArmor(player.getInventory().getLeggings().getType()))
+				|| (player.getInventory().getBoots() != null && isArmor(player.getInventory().getBoots().getType()));
+	}
+
+	public static int getArmorPoints(final Player player) {
+		int armorPoints = 0;
+		final ItemStack[] armorItems = player.getInventory().getArmorContents();
+
+		for (final ItemStack item : armorItems) {
+			if (item == null || item.getType() == Material.AIR) {
+				continue;
+			}
+
+			switch (item.getType()) {
+				case LEATHER_HELMET -> armorPoints += 1;
+				case LEATHER_CHESTPLATE -> armorPoints += 3;
+				case LEATHER_LEGGINGS -> armorPoints += 2;
+				case LEATHER_BOOTS -> armorPoints += 1;
+
+				case GOLDEN_HELMET -> armorPoints += 2;
+				case GOLDEN_CHESTPLATE -> armorPoints += 5;
+				case GOLDEN_LEGGINGS -> armorPoints += 3;
+				case GOLDEN_BOOTS -> armorPoints += 1;
+
+				case CHAINMAIL_HELMET, IRON_HELMET -> armorPoints += 2;
+				case CHAINMAIL_CHESTPLATE, IRON_CHESTPLATE -> armorPoints += 6;
+				case CHAINMAIL_LEGGINGS, IRON_LEGGINGS -> armorPoints += 5;
+				case CHAINMAIL_BOOTS, IRON_BOOTS -> armorPoints += 2;
+
+				case DIAMOND_HELMET -> armorPoints += 3;
+				case DIAMOND_CHESTPLATE -> armorPoints += 8;
+				case DIAMOND_LEGGINGS -> armorPoints += 6;
+				case DIAMOND_BOOTS -> armorPoints += 3;
+
+				case NETHERITE_HELMET -> armorPoints += 3;
+				case NETHERITE_CHESTPLATE -> armorPoints += 8;
+				case NETHERITE_LEGGINGS -> armorPoints += 6;
+				case NETHERITE_BOOTS -> armorPoints += 3;
+			}
+		}
+
+		return armorPoints;
+	}
+
 	public static boolean isAdjacentToThreeOrMoreSources(final Block block) {
 		return isAdjacentToThreeOrMoreSources(block, false);
 	}

@@ -3,7 +3,6 @@ package com.projectkorra.projectkorra.airbending;
 import java.util.ArrayList;
 import java.util.Random;
 
-import com.projectkorra.projectkorra.ability.CoreAbility;
 import org.bukkit.Difficulty;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -56,10 +55,7 @@ public class AirScooter extends AirAbility {
 		} else if (this.bPlayer.isOnCooldown(this)) {
 			return;
 		}
-		final AirBlast blast = CoreAbility.getAbility(player, AirBlast.class);
-		if (blast != null && blast.isFromOtherOrigin()) {
-			blast.remove();
-		}
+		AirBlast.removePlayerAirBlasts(player, true);
 
 		this.speed = getConfig().getDouble("Abilities.Air.AirScooter.Speed");
 		this.interval = getConfig().getDouble("Abilities.Air.AirScooter.Interval");
@@ -97,10 +93,6 @@ public class AirScooter extends AirAbility {
 			} else {
 				this.useslime = false;
 			}
-		}
-
-		if (CoreAbility.getAbility(this.player, AirBlast.class) != null) {
-			CoreAbility.getAbility(this.player, AirBlast.class).remove();
 		}
 
 		this.start();
