@@ -3,7 +3,10 @@ package com.projectkorra.projectkorra.airbending;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Effect;
@@ -29,6 +32,18 @@ import com.projectkorra.projectkorra.waterbending.WaterSpout;
 
 public class AirSuction extends AirAbility {
 
+	private static final Map<UUID, AirSuctionData> playerSuctionData = new ConcurrentHashMap<>();
+
+	private static class AirSuctionData {
+		private int chainCount;
+		private long lastSuctionTime;
+
+		public AirSuctionData() {
+			this.chainCount = 0;
+			this.lastSuctionTime = 0;
+		}
+	}
+
 	private final List<Block> affectedDoors = new ArrayList<>();
 
 	private boolean progressing;
@@ -50,6 +65,10 @@ public class AirSuction extends AirAbility {
 	private Location origin;
 	private Vector direction;
 	private boolean canAffectSelf;
+	@Attribute("MaxChains")
+	private int maxChains;
+	@Attribute("LongCooldown")
+	private long longCooldown;
 
 	public AirSuction(final Player player) {
 		super(player);
@@ -82,6 +101,8 @@ public class AirSuction extends AirAbility {
 		this.pushFactor = getConfig().getDouble("Abilities.Air.AirSuction.Push.Self");
 		this.pushFactorForOthers = getConfig().getDouble("Abilities.Air.AirSuction.Push.Others");
 		this.cooldown = getConfig().getLong("Abilities.Air.AirSuction.Cooldown");
+		this.maxChains = getConfig().getInt("Abilities.Air.AirSuction.MaxChains");
+		this.longCooldown = getConfig().getLong("Abilities.Air.AirSuction.LongCooldown");
 		this.random = new Random();
 		this.origin = this.getTargetLocation();
 		this.canAffectSelf = true;
@@ -260,6 +281,18 @@ public class AirSuction extends AirAbility {
 	}
 
 	public void shoot() {
+		final AirSuctionData data = playerSuctionData.computeIfAbsent(this.player.getUniqueId(), p -> new AirSuctionData());
+		final long currentTime = System.currentTimeMillis();
+		if (currentTime - data.lastSuctionTime > this.longCooldown) {
+			data.chainCount = 0;
+		}
+
+		if (data.chainCount >= this.maxChains) {
+			this.bPlayer.addCooldown(this, this.longCooldown);
+			data.chainCount = 0;
+			return;
+		}
+
 		Location target;
 		final Entity entity = GeneralMethods.getTargetedEntity(this.player, this.range);
 
@@ -272,7 +305,17 @@ public class AirSuction extends AirAbility {
 		this.location = target.clone();
 		this.direction = GeneralMethods.getDirection(this.location, this.origin).normalize();
 		this.progressing = true;
-		this.bPlayer.addCooldown(this);
+
+		data.chainCount++;
+		data.lastSuctionTime = currentTime;
+		playerSuctionData.put(this.player.getUniqueId(), data);
+
+		if (data.chainCount >= this.maxChains) {
+			this.bPlayer.addCooldown(this, this.longCooldown);
+			data.chainCount = 0;
+		} else {
+			this.bPlayer.addCooldown(this);
+		}
 	}
 
 	public static void shoot(final Player player) {

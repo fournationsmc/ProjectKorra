@@ -11,6 +11,9 @@ import com.projectkorra.projectkorra.util.ChatUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -59,6 +62,7 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private Vector prevDir;
+	private BossBar bossBar;
 
 	public FlightMultiAbility(final Player player) {
 		super(player);
@@ -125,6 +129,8 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 		this.slowSpeed = this.baseSpeed / 2;
 		this.fastSpeed = this.baseSpeed * 2;
 		this.multiplier = this.baseSpeed;
+		this.bossBar = Bukkit.createBossBar("Flight Duration", BarColor.WHITE, BarStyle.SOLID);
+		this.bossBar.addPlayer(player);
 		this.start();
 	}
 
@@ -161,9 +167,14 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 		}
 
 		if (this.duration > 0) {
-			if (System.currentTimeMillis() >= this.duration + this.getStartTime()) {
+			final long elapsed = System.currentTimeMillis() - this.getStartTime();
+			if (elapsed >= this.duration) {
 				this.remove();
 				return;
+			}
+			if (this.bossBar != null) {
+				final double progress = 1.0 - ((double) elapsed / (double) this.duration);
+				this.bossBar.setProgress(Math.max(0, Math.min(1, progress)));
 			}
 		}
 
@@ -323,6 +334,10 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 		this.bPlayer.addCooldown(this);
 		MultiAbilityManager.unbindMultiAbility(this.player);
 		flying.remove(this.player.getUniqueId());
+		if (this.bossBar != null) {
+			this.bossBar.removeAll();
+			this.bossBar = null;
+		}
 		if (this.player.isOnline() && !this.player.isDead()) {
 			this.player.eject();
 		}

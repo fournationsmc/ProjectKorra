@@ -36,6 +36,7 @@ public class FireWheel extends FireAbility implements ComboAbility {
 	@Attribute(Attribute.HEIGHT) @DayNightFactor
 	private double height;
 	private double radius;
+	private double hitboxmultiplier;
 	@Attribute(Attribute.SPEED) @DayNightFactor
 	private double speed;
 	@Attribute(Attribute.FIRE_TICK) @DayNightFactor
@@ -54,6 +55,7 @@ public class FireWheel extends FireAbility implements ComboAbility {
 
 		this.damage = getConfig().getDouble("Abilities.Fire.FireWheel.Damage");
 		this.range = getConfig().getDouble("Abilities.Fire.FireWheel.Range");
+		this.hitboxmultiplier = getConfig().getDouble("Abilities.Fire.FireWheel.HitboxMultiplier");
 		this.speed = getConfig().getDouble("Abilities.Fire.FireWheel.Speed");
 		this.cooldown = getConfig().getLong("Abilities.Fire.FireWheel.Cooldown");
 		this.fireTicks = getConfig().getDouble("Abilities.Fire.FireWheel.FireTicks");
@@ -130,7 +132,7 @@ public class FireWheel extends FireAbility implements ComboAbility {
 			emitFirebendingLight(tempLoc);
 		}
 
-		for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.location, this.radius + 0.5)) {
+		for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.location, this.radius * this.hitboxmultiplier)) {
 			if (entity instanceof LivingEntity && !entity.equals(this.player)) {
 				if (!this.affectedEntities.contains(entity)) {
 					this.affectedEntities.add((LivingEntity) entity);

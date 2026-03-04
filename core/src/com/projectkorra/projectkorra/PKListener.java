@@ -559,6 +559,21 @@ public class PKListener implements Listener {
 				event.setCancelled(true);
 			}
 
+			if (CoreAbility.getAbility(player, AirScooter.class) != null) {
+				final AirScooter scooter = CoreAbility.getAbility(player, AirScooter.class);
+				if (scooter != null) {
+					scooter.addDamageTaken(event.getFinalDamage());
+					if (scooter.getTotalDamageTaken() >= scooter.getDamageThreshold()) {
+						scooter.remove();
+					}
+				}
+			}
+
+			final Paralyze.Pair<MovementHandler, Double> paralyzeEntry = Paralyze.getParalyzedEntities().get(player);
+			if (paralyzeEntry != null) {
+				Paralyze.addDamage(player, event.getDamage());
+			}
+
 			if (bPlayer.isElementToggled(Element.FIRE)) {
 				return;
 			}

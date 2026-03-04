@@ -32,6 +32,7 @@ import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
 import com.projectkorra.projectkorra.util.DamageHandler;
+import com.projectkorra.projectkorra.waterbending.WaterSpout;
 import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
 
 public class FireBlast extends FireAbility {
@@ -149,6 +150,9 @@ public class FireBlast extends FireAbility {
 
 	public boolean checkLocation(Block block) {
 		if (block.isLiquid()) {
+			if (WaterSpout.getAffectedBlocks().containsKey(block)) {
+				return true;
+			}
 			this.remove();
 			return false;
 		}

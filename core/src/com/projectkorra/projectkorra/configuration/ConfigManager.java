@@ -909,6 +909,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirBlast.SelectParticles", 4);
 			config.addDefault("Abilities.Air.AirBlast.Particles", 6);
 			config.addDefault("Abilities.Air.AirBlast.Cooldown", 500);
+			config.addDefault("Abilities.Air.AirBlast.MaxChains", 5);
+			config.addDefault("Abilities.Air.AirBlast.LongCooldown", 5000);
 			config.addDefault("Abilities.Air.AirBlast.Push.Self", 2.0);
 			config.addDefault("Abilities.Air.AirBlast.Push.Entities", 1.6);
 			config.addDefault("Abilities.Air.AirBlast.CanFlickLevers", true);
@@ -935,6 +937,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirScooter.Cooldown", 7000);
 			config.addDefault("Abilities.Air.AirScooter.Duration", 0);
 			config.addDefault("Abilities.Air.AirScooter.MaxHeightFromGround", 7);
+			config.addDefault("Abilities.Air.AirScooter.DamageThreshold", 4);
 
 			config.addDefault("Abilities.Air.AirShield.Enabled", true);
 			config.addDefault("Abilities.Air.AirShield.Cooldown", 0);
@@ -961,6 +964,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirSuction.Push.Self", 2.0);
 			config.addDefault("Abilities.Air.AirSuction.Push.Others", 1.3);
 			config.addDefault("Abilities.Air.AirSuction.Cooldown", 500);
+			config.addDefault("Abilities.Air.AirSuction.MaxChains", 5);
+			config.addDefault("Abilities.Air.AirSuction.LongCooldown", 5000);
 			config.addDefault("Abilities.Air.AirSuction.Particles", 6);
 			config.addDefault("Abilities.Air.AirSuction.SelectParticles", 6);
 
@@ -1677,6 +1682,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.FireWheel.Cooldown", 6000);
 			config.addDefault("Abilities.Fire.FireWheel.FireTicks", 2.5);
 			config.addDefault("Abilities.Fire.FireWheel.Height", 2);
+			config.addDefault("Abilities.Fire.FireWheel.HitboxMultiplier", 0.2);
 			config.addDefault("Abilities.Fire.FireWheel.Combination", Arrays.asList("FireShield:SNEAK_DOWN", "FireShield:RIGHT_CLICK_BLOCK", "FireShield:RIGHT_CLICK_BLOCK", "Blaze:SNEAK_UP"));
 
 			config.addDefault("Abilities.Fire.JetBlast.Enabled", true);
@@ -1723,6 +1729,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Chi.Paralyze.Enabled", true);
 			config.addDefault("Abilities.Chi.Paralyze.Cooldown", 10000);
 			config.addDefault("Abilities.Chi.Paralyze.Duration", 1500);
+			config.addDefault("Abilities.Chi.Paralyze.EntityDamageThreshold", 4);
 
 			config.addDefault("Abilities.Chi.RapidPunch.Enabled", true);
 			config.addDefault("Abilities.Chi.RapidPunch.Damage", 1);

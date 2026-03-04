@@ -1,5 +1,6 @@
 package com.projectkorra.projectkorra.airbending.passive;
 
+import com.projectkorra.projectkorra.GeneralMethods;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
@@ -34,13 +35,18 @@ public class AirAgility extends AirAbility implements PassiveAbility {
 			return;
 		}
 
+		final int armorPoints = GeneralMethods.getArmorPoints(this.player);
+		final boolean shouldApplyNerf = armorPoints > 6;
+		final int adjustedJumpPower = shouldApplyNerf ? 0 : this.jumpPower;
+		final int adjustedSpeedPower = shouldApplyNerf ? 0 : this.speedPower;
+
 		// Jump Buff.
 		if (!this.player.hasPotionEffect(PotionEffectType.JUMP) || this.player.getPotionEffect(PotionEffectType.JUMP).getAmplifier() < this.jumpPower || (this.player.getPotionEffect(PotionEffectType.JUMP).getAmplifier() == this.jumpPower && this.player.getPotionEffect(PotionEffectType.JUMP).getDuration() == 1)) {
-			this.player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 10, this.jumpPower, true, false), true);
+			this.player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 10, adjustedJumpPower, true, false), true);
 		}
 		// Speed Buff.
 		if (!this.player.hasPotionEffect(PotionEffectType.SPEED) || this.player.getPotionEffect(PotionEffectType.SPEED).getAmplifier() < this.speedPower || (this.player.getPotionEffect(PotionEffectType.SPEED).getAmplifier() == this.speedPower && this.player.getPotionEffect(PotionEffectType.SPEED).getDuration() == 1)) {
-			this.player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 10, this.speedPower, true, false), true);
+			this.player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 10, adjustedSpeedPower, true, false), true);
 		}
 	}
 

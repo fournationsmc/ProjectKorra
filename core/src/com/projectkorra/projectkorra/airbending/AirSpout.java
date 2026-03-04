@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import com.projectkorra.projectkorra.ability.CoreAbility;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -40,6 +41,10 @@ public class AirSpout extends AirAbility {
 
 		if (!this.bPlayer.canBend(this)) {
 			return;
+		}
+		final AirBlast blast = CoreAbility.getAbility(player, AirBlast.class);
+		if (blast != null && blast.isFromOtherOrigin()) {
+			blast.remove();
 		}
 
 		this.angle = 0;
