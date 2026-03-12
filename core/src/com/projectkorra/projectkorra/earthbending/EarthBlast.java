@@ -124,23 +124,22 @@ public class EarthBlast extends EarthAbility {
 	private Location getTargetLocation() {
 		final Entity target = GeneralMethods.getTargetedEntity(this.player, this.range, new ArrayList<Entity>());
 		Location location;
-		final Material[] trans = new Material[getTransparentMaterials().length + this.getEarthbendableBlocks().size()];
-		int i = 0;
-		for (int j = 0; j < getTransparentMaterials().length; j++) {
-			trans[j] = getTransparentMaterials()[j];
-			i++;
-		}
-		for (int j = 0; j < this.getEarthbendableBlocks().size(); j++) {
-			try {
-				trans[i] = Material.valueOf(this.getEarthbendableBlocks().get(j));
-			} catch (final IllegalArgumentException e) {
-				continue;
+		final ArrayList<Material> trans = new ArrayList<>();
+		for (final Material material : getTransparentMaterials()) {
+			if (material != null) {
+				trans.add(material);
 			}
-			i++;
+		}
+		for (final String blockName : this.getEarthbendableBlocks()) {
+			try {
+				trans.add(Material.valueOf(blockName));
+			} catch (final IllegalArgumentException e) {
+				// Ignore invalid/legacy material names from config.
+			}
 		}
 
 		if (target == null) {
-			location = GeneralMethods.getTargetedLocation(this.player, this.range, true, trans);
+			location = GeneralMethods.getTargetedLocation(this.player, this.range, true, trans.toArray(new Material[0]));
 		} else {
 			location = ((LivingEntity) target).getEyeLocation();
 		}
@@ -689,3 +688,4 @@ public class EarthBlast extends EarthAbility {
 		this.location = location;
 	}
 }
+
