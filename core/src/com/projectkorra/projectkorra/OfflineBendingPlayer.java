@@ -106,7 +106,7 @@ public class OfflineBendingPlayer {
     }
 
     public OfflineBendingPlayer(@NotNull OfflineBendingPlayer player) {
-        this.player = player.player;
+        this.player = Bukkit.getOfflinePlayer(player.uuid);
         this.uuid = player.uuid;
         this.permaRemoved = player.permaRemoved;
         this.toggled = player.toggled;
@@ -157,6 +157,7 @@ public class OfflineBendingPlayer {
 
         Runnable loadTask = () -> {
             OfflineBendingPlayer bPlayer = new OfflineBendingPlayer(offlinePlayer);
+            final String offlinePlayerName = offlinePlayer.getName();
             if (offlinePlayer.isOnline()) {
                 bPlayer = new BendingPlayer(offlinePlayer.getPlayer());
                 ONLINE_PLAYERS.put(uuid, (BendingPlayer) bPlayer);
@@ -166,8 +167,8 @@ public class OfflineBendingPlayer {
             final ResultSet rs2 = DBConnection.sql.readQuery("SELECT * FROM pk_players WHERE uuid = '" + uuid + "'");
             try {
                 if (!rs2.next()) { // Data doesn't exist, we want a completely new player.
-                    DBConnection.sql.modifyQuery("INSERT INTO pk_players (uuid, player, slot1, slot2, slot3, slot4, slot5, slot6, slot7, slot8, slot9) VALUES ('" + uuid + "', '" + offlinePlayer.getName() + "', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null')");
-                    Bukkit.getScheduler().runTask(ProjectKorra.plugin, () -> ProjectKorra.log.info("Created new BendingPlayer for " + offlinePlayer.getName()));
+                    DBConnection.sql.modifyQuery("INSERT INTO pk_players (uuid, player, slot1, slot2, slot3, slot4, slot5, slot6, slot7, slot8, slot9) VALUES ('" + uuid + "', '" + (offlinePlayerName == null ? "" : offlinePlayerName) + "', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null')");
+                    Bukkit.getScheduler().runTask(ProjectKorra.plugin, () -> ProjectKorra.log.info("Created new BendingPlayer for " + (offlinePlayerName == null ? uuid : offlinePlayerName)));
                     OfflineBendingPlayer newPlayer;
                     if (offlinePlayer.isOnline()) {
                         BendingPlayer onlinePlayer = new BendingPlayer(offlinePlayer.getPlayer());
@@ -192,10 +193,10 @@ public class OfflineBendingPlayer {
                 } else {
                     // The player has at least played before.
                     final String player2 = rs2.getString("player");
-                    if (!offlinePlayer.getName().equalsIgnoreCase(player2)) {
-                        DBConnection.sql.modifyQuery("UPDATE pk_players SET player = '" + offlinePlayer.getName() + "' WHERE uuid = '" + uuid.toString() + "'");
+                    if (offlinePlayerName != null && !offlinePlayerName.equalsIgnoreCase(player2)) {
+                        DBConnection.sql.modifyQuery("UPDATE pk_players SET player = '" + offlinePlayerName + "' WHERE uuid = '" + uuid.toString() + "'");
                         // They have changed names.
-                        ProjectKorra.log.info("Updating Player Name for " + offlinePlayer.getName());
+                        ProjectKorra.log.info("Updating Player Name for " + offlinePlayerName);
                     }
                     final String subelementField = rs2.getString("subelement");
                     final String elementField = rs2.getString("element");
@@ -593,13 +594,13 @@ public class OfflineBendingPlayer {
 
             try {
                 DBConnection.sql.getConnection().setAutoCommit(false);
-                DBConnection.sql.modifyQuery("DELETE FROM pk_temp_elements WHERE uuid = '" + uuid + "'");
+                DBConnection.sql.modifyQuery("DELETE FROM pk_temp_elements WHERE uuid = '" + uuid + "'", false);
                 DBConnection.sql.getConnection().commit(); //Force the delete statement to go through before the next SQL statement
                 for (Element e : this.tempElements.keySet()) {
-                    DBConnection.sql.modifyQuery("INSERT INTO pk_temp_elements (uuid, element, expiry) VALUES ('" + uuid + "', '" + e.getName() + "', " + this.tempElements.get(e) + ")");
+                    DBConnection.sql.modifyQuery("INSERT INTO pk_temp_elements (uuid, element, expiry) VALUES ('" + uuid + "', '" + e.getName() + "', " + this.tempElements.get(e) + ")", false);
                 }
                 for (Element e : this.tempSubElements.keySet()) {
-                    DBConnection.sql.modifyQuery("INSERT INTO pk_temp_elements (uuid, element, expiry) VALUES ('" + uuid + "', '" + e.getName() + "', " + this.tempSubElements.get(e) + ")");
+                    DBConnection.sql.modifyQuery("INSERT INTO pk_temp_elements (uuid, element, expiry) VALUES ('" + uuid + "', '" + e.getName() + "', " + this.tempSubElements.get(e) + ")", false);
                 }
                 DBConnection.sql.getConnection().commit(); //Force the delete statement to go through before the next SQL statement
                 DBConnection.sql.getConnection().setAutoCommit(true);
@@ -1281,7 +1282,7 @@ public class OfflineBendingPlayer {
     }
 
     protected static BendingPlayer convertToOnline(@NotNull OfflineBendingPlayer offlineBendingPlayer) {
-        Player player = offlineBendingPlayer.player.getPlayer();
+        Player player = Bukkit.getPlayer(offlineBendingPlayer.uuid);
         if (player == null) {
             return null;
         }

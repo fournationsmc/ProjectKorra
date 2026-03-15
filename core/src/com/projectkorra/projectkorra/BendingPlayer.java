@@ -78,7 +78,7 @@ public class BendingPlayer extends OfflineBendingPlayer {
 	public BendingPlayer(OfflineBendingPlayer player) {
 		super(player);
 
-		this.player = player.player.getPlayer();
+		this.player = Bukkit.getPlayer(player.getUUID());
 		this.tremorSense = true;
 		this.illumination = true;
 		this.chiBlocked = false;

@@ -38,11 +38,12 @@ public class MySQL extends Database {
 
 			Class.forName("com.mysql.jdbc.Driver");
 
+			String propertiesSuffix = "";
 			if (this.properties != null && !this.properties.isEmpty()) {
-				this.properties = "?" + this.properties;
+				propertiesSuffix = "?" + this.properties;
 			}
 
-			final String url = "jdbc:mysql://" + this.host + ":" + this.port + "/" + this.database + this.properties;
+			final String url = "jdbc:mysql://" + this.host + ":" + this.port + "/" + this.database + propertiesSuffix;
 
 			this.connection = DriverManager.getConnection(url, this.user, this.pass);
 			this.printInfo("Connection established!");

@@ -144,6 +144,9 @@ public class DBConnection {
 	 */
 	private static void convertOldCooldownsTable() {
 		if (DBConnection.sql.tableExists("pk_cooldown_ids")) {
+			if (!DBConnection.sql.tableExists("pk_cooldowns") || !DBConnection.sql.columnExists("pk_cooldowns", "cooldown_id")) {
+				return;
+			}
 
 			Map<Integer, String> oldCooldownIDs = new HashMap<>();
 			Map<String, Map<String, Long>> oldTable = new HashMap<>();
