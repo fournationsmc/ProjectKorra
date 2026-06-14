@@ -105,9 +105,6 @@ public class EarthSmash extends EarthAbility {
 
 			EarthSmash grabbedSmash = this.aimingAtSmashCheck(player, State.LIFTED);
 			if (grabbedSmash == null) {
-				if (this.bPlayer.isOnCooldown(this)) {
-					return;
-				}
 				grabbedSmash = this.aimingAtSmashCheck(player, State.SHOT);
 			}
 
@@ -184,8 +181,12 @@ public class EarthSmash extends EarthAbility {
 				this.remove();
 				return;
 			}
-		} else if (this.state == State.FLYING || this.state == State.GRABBED) {
-			if (!this.bPlayer.canBendIgnoreCooldowns(this)) {
+		} else {
+			if (this.player == null || !this.player.isOnline() || this.player.isDead()) {
+				this.remove();
+				return;
+			}
+			if ((this.state == State.FLYING || this.state == State.GRABBED) && !this.bPlayer.canBendIgnoreBindsCooldowns(this)) {
 				this.remove();
 				return;
 			}
